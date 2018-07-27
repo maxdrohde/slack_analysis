@@ -1,0 +1,14 @@
+# Some ideas:
+
+Textual data:
+- Word Cloud
+
+Chronological data:
+- When do people post most often?
+
+Person data:
+- Who posts the most?
+= Who has the highest writing level?
+
+Machine learning:
+- Build a generative bot to sound like Peter's slack posts
