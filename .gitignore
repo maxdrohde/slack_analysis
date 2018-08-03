@@ -2,7 +2,7 @@
 slack/
 slack_data.csv
 ideas.txt
-
+/analyze_slack.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
