@@ -3,6 +3,9 @@ from message import Message
 import json
 from datetime import datetime
 
+DATA_FOLDER_NAME = 'slack'
+p = Path('./' + DATA_FOLDER_NAME) # path to data folder
+
 def ts_to_datetime(ts):
     ts = float(ts)
     dt = datetime.fromtimestamp(ts)
@@ -41,7 +44,6 @@ user_dict['USLACKBOT'] = 'Slackbot'
 # Load the data files into Message objects
 #-------------------------------------------------------------------------------
 def load_messages():
-    p = Path('./slack') # path to data folder
 
     # Get paths for all channel directories
     channel_dirs = [channel_dir for channel_dir in p.iterdir() if channel_dir.is_dir()]
