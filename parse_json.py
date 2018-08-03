@@ -1,30 +1,15 @@
 from pathlib import Path
 from message import Message
-import json
-from datetime import datetime
+from tools import *
+from get_user_dict import get_user_dict
 
 DATA_FOLDER_NAME = 'slack'
 p = Path('./' + DATA_FOLDER_NAME) # path to data folder
 
-def ts_to_datetime(ts):
-    ts = float(ts)
-    dt = datetime.fromtimestamp(ts)
-    return dt
-
-def ts_to_date_str(ts):
-    ts = float(ts)
-    date_str = datetime.fromtimestamp(ts).strftime("%A, %d %B %Y %I:%M%p")
-    return date_str
-
-def parse_json(json_path):
-    # Parses a JSON file given the path
-    with open(json_path, encoding='utf-8') as data_file:
-        data = json.loads(data_file.read())
-    return data
-
-def load_message(message_dict):
+def load_message_object(message_dict, channel):
     # Given a list of attributes -> loads the message object from the message dict
     attributes = ['text', 'files', 'subtype', 'user', 'ts']
+    user_dict = get_user_dict()
 
     message = Message()
     for attribute in attributes:
@@ -33,19 +18,13 @@ def load_message(message_dict):
             if attribute == 'user':
                 value = user_dict[value]
             setattr(message, attribute, value)
+    message.channel = channel
+    message.dt = ts_to_datetime(message.ts)
+    message.date_str = ts_to_date_str(message.ts)
     return message
 
-# Get a dict of User IDs to real names
-user_file =  Path('./slack/users.json')
-user_json = b = parse_json(user_file)
-user_dict = {user['id']: user['profile']['real_name'] for user in user_json}
-user_dict['USLACKBOT'] = 'Slackbot'
-
-# Load the data files into Message objects
-#-------------------------------------------------------------------------------
 def load_messages():
-
-    # Get paths for all channel directories
+    # Get paths for all channel directories --> [<dir_path_1>, <dir_path_2>, ...]
     channel_dirs = [channel_dir for channel_dir in p.iterdir() if channel_dir.is_dir()]
 
     # Create dict {channel_name : [list of json file paths]}
@@ -56,9 +35,6 @@ def load_messages():
         for file in files:
             jsons = parse_json(file)
             for message_dict in jsons:
-                message = load_message(message_dict)
-                message.channel = channel
-                message.dt = ts_to_datetime(message.ts)
-                message.date_str = ts_to_date_str(message.ts)
+                message = load_message_object(message_dict, channel)
                 messages.append(message)
     return messages
